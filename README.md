@@ -8,25 +8,28 @@ and supertest. It uses CommonJS output and requires Node.js 20 or newer.
 ```bash
 git clone https://github.com/DiegoVallejoDev/Express-Yup-Typescript-template.git
 cd Express-Yup-Typescript-template
-npm install
+corepack enable
+pnpm install
 cp .env.example .env
-npm run dev
+pnpm dev
 ```
 
-The server listens on `http://localhost:3000` by default.
+The server listens on `http://localhost:3000` by default. Corepack uses the
+`packageManager` field to select the pinned pnpm version. Scaffolded projects can
+delete `pnpm-lock.yaml` if they want a fresh dependency resolution.
 
 ## Scripts
 
-| Command                | Description                                       |
-| ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | Start the TypeScript server with `tsx` watch mode |
-| `npm run build`        | Compile production files into `dist/`             |
-| `npm start`            | Run the compiled production server                |
-| `npm test`             | Run the Vitest test suite                         |
-| `npm run lint`         | Run ESLint                                        |
-| `npm run typecheck`    | Type-check without emitting files                 |
-| `npm run format`       | Format supported files with Prettier              |
-| `npm run format:check` | Check formatting without changing files           |
+| Command             | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `pnpm dev`          | Start the TypeScript server with `tsx` watch mode |
+| `pnpm build`        | Compile production files into `dist/`             |
+| `pnpm start`        | Run the compiled production server                |
+| `pnpm test`         | Run the Vitest test suite                         |
+| `pnpm lint`         | Run ESLint                                        |
+| `pnpm typecheck`    | Type-check without emitting files                 |
+| `pnpm format`       | Format supported files with Prettier              |
+| `pnpm format:check` | Check formatting without changing files           |
 
 ## Project structure
 

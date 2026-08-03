@@ -24,6 +24,17 @@ Enable Corepack to use the pnpm version declared in `package.json`:
 corepack enable
 ```
 
+### Troubleshooting
+
+If `corepack enable` fails with `Cannot find matching keyid`, the Corepack
+bundled with the installed Node.js version is too old and has stale signing
+keys. Update Corepack and enable it again:
+
+```bash
+npm install --global corepack@latest
+corepack enable
+```
+
 ## Quickstart
 
 ```bash

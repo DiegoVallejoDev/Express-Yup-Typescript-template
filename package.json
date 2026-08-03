@@ -1,44 +1,56 @@
 {
-  "name": "express-typescript",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
+  "name": "express-yup-typescript",
+  "version": "2.0.0",
+  "description": "Minimal Express 5 API template with TypeScript and Yup validation",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
-    "dev": "nodemon",
-    "test": "ts-node src/tests/index.ts",
-    "lint": "eslint . --ext .ts"
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "typescript",
+    "yup",
+    "api"
+  ],
+  "author": "Diego Vallejo",
+  "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "yup": "^1.0.0"
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.16",
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
-    "@typescript-eslint/parser": "^5.50.0",
-    "eslint": "^8.33.0",
-    "nodemon": "^2.0.20",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "@eslint/js": "^9.39.5",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.13.3",
+    "@types/supertest": "^6.0.3",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.6",
+    "supertest": "^7.2.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vitest": "^3.2.7"
   },
-  "nodemonConfig": {
-    "execMap": {
-      "ts": "ts-node"
-    },
-    "watch": [
-      "src"
-    ],
-    "ext": "ts",
-    "ignore": [
-      "src/**/*.spec.ts"
-    ],
-    "exec": "ts-node src/index.ts"
+  "type": "commonjs",
+  "packageManager": "pnpm@10.34.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DiegoVallejoDev/Express-Yup-Typescript-template.git"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10.34.5"
   }
 }

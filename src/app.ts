@@ -9,8 +9,9 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  void _next;
-  console.error(error);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(error);
+  }
   const message =
     process.env.NODE_ENV === 'development' ? error.message : 'Internal server error';
 

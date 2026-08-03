@@ -5,8 +5,8 @@ and a pnpm-based development workflow.
 
 The template provides:
 
-- Express 5 with typed request handling
-- Yup validation with cast values available through `res.locals.validated`
+- Express 5 with schema-derived request types (`Yup.InferType`)
+- Yup validation with cast values available through typed `res.locals.validated`
 - Structured JSON responses for validation, not-found, and internal errors
 - Helmet and CORS security middleware
 - Vitest and supertest coverage
@@ -105,20 +105,25 @@ GET /hello?name=John&age=20
 1. Add a Yup schema under `src/schemas/`.
 2. Add a `Route` entry to the `Routes` table in `src/routes/index.ts`.
 3. Place `validate(schema)` before the route handler.
-4. Read validated and cast values from `res.locals.validated`.
-5. Add a supertest case in `src/tests/index.spec.ts`.
+4. Type the handler's `res` with `Response<unknown, { validated: InferType<typeof yourSchema> }>` so `res.locals.validated` is fully typed and the `as` cast is unnecessary.
+5. Assert the `Routes` array to `Route[]` so the shared route table type accepts route-specific validated locals.
+6. Add a supertest case in `src/tests/index.spec.ts`.
 
 For example:
 
 ```ts
-{
-  path: '/people',
-  method: 'post',
-  handler: [
-    validate(personSchema),
-    (_req, res) => res.json(res.locals.validated),
-  ],
-}
+const Routes = [
+  {
+    path: '/people',
+    method: 'post',
+    handler: [
+      validate(personSchema),
+      (_req, res: Response<unknown, { validated: InferType<typeof personSchema> }>) => {
+        res.json(res.locals.validated);
+      },
+    ],
+  },
+] as Route[];
 ```
 
 ## Error responses

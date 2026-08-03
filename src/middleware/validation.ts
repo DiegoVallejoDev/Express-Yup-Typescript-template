@@ -1,9 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import * as Yup from 'yup';
 
+type ValidatedLocals<S extends Yup.AnyObjectSchema> = {
+  validated: Yup.InferType<S>;
+};
+
 export const validate =
-  (schema: Yup.AnySchema) =>
-  async (req: Request, res: Response, next: NextFunction) => {
+  <S extends Yup.AnyObjectSchema>(schema: S) =>
+  async (
+    req: Request,
+    res: Response<unknown, ValidatedLocals<S>>,
+    next: NextFunction,
+  ) => {
     try {
       res.locals.validated = await schema.validate(
         {

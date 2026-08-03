@@ -1,12 +1,14 @@
+import type { InferType } from 'yup';
 import { Express, Request, Response } from 'express';
 import { Route } from './Route';
 
 import { personSchema } from '../schemas/personschema';
 import { validate } from '../middleware/validation';
 import { personUtils } from '../utils/personUtils';
-import { Person } from '../utils/types/person';
 
-const Routes: Route[] = [
+type ValidatedHello = InferType<typeof personSchema>;
+
+const Routes = [
   {
     path: '/',
     method: 'get',
@@ -24,16 +26,12 @@ const Routes: Route[] = [
     method: 'get',
     handler: [
       validate(personSchema),
-      (_req: Request, res: Response) => {
-        res.send(hello(res.locals.validated.query as Person));
+      (_req: Request, res: Response<unknown, { validated: ValidatedHello }>) => {
+        res.send(personUtils(res.locals.validated.query));
       },
     ],
   },
-];
-
-function hello(person: Person) {
-  return personUtils(person);
-}
+] as Route[];
 
 /**
  * Injects the defined routes into the provided Express app instance.

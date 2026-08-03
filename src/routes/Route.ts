@@ -1,8 +1,7 @@
-import {  RequestHandler } from "express";
-
+import { RequestHandler } from 'express';
 
 export interface Route {
-    path: string;
-    method: "get" | "post" | "put" | "delete";
-    handler: RequestHandler[];
+  path: string;
+  method: 'get' | 'post' | 'put' | 'delete';
+  handler: RequestHandler[];
 }

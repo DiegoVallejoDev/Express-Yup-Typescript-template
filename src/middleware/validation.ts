@@ -1,25 +1,30 @@
-import * as Yup from "yup";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from 'express';
+import * as Yup from 'yup';
 
-/**
- * Middleware function that validates the request body, query, and params against a Yup schema.
- * If validation fails, it returns a 500 status code with the error message.
- * If validation succeeds, it calls the next middleware function.
- * @param schema - The Yup schema to validate against.
- */
 export const validate =
   (schema: Yup.AnySchema) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.validate({
-        body: req.body,
-        query: req.query,
-        params: req.params,
-      });
+      res.locals.validated = await schema.validate(
+        {
+          body: req.body,
+          query: req.query,
+          params: req.params,
+        },
+        { abortEarly: false },
+      );
       return next();
-    // catch errors from yup should be any type 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      return res.status(500).json({ type: err.name, message: err.message });
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        return res.status(400).json({
+          error: {
+            type: 'validation_error',
+            message: 'Request validation failed',
+            details: error.errors,
+          },
+        });
+      }
+
+      return next(error);
     }
   };

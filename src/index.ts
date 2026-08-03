@@ -16,7 +16,7 @@ const parsePort = (value: string | undefined): number => {
 
 export const start = (port = parsePort(process.env.PORT)): Server => {
   const server = app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+    console.log(`Server is running at http://localhost:${port}`);
   });
 
   server.on('error', (error) => {

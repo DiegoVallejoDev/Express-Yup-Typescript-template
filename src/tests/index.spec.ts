@@ -1,5 +1,6 @@
+import express from 'express';
 import request from 'supertest';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createApp, errorHandler } from '../app';
 import { personUtils } from '../utils/personUtils';
 
@@ -42,24 +43,18 @@ describe('API routes', () => {
     expect(response.body.error.type).toBe('not_found');
   });
 
-  it('returns 500 for an error passed to the error handler', () => {
-    const status = vi.fn().mockReturnThis();
-    const json = vi.fn();
-
-    errorHandler(
-      new Error('test failure'),
-      {} as never,
-      { status, json } as never,
-      vi.fn(),
-    );
-
-    expect(status).toHaveBeenCalledWith(500);
-    expect(json).toHaveBeenCalledWith({
-      error: {
-        type: 'internal_error',
-        message: 'Internal server error',
-      },
+  it('returns 500 when a route throws an error', async () => {
+    const throwingApp = express();
+    throwingApp.get('/error', () => {
+      throw new Error('test failure');
     });
+    throwingApp.use(errorHandler);
+
+    const response = await request(throwingApp).get('/error');
+
+    expect(response.status).toBe(500);
+    expect(response.body.error.type).toBe('internal_error');
+    expect(response.body.error.message).toBe('Internal server error');
   });
 });
 

@@ -14,3 +14,5 @@ export const personSchema = yup.object().shape({
     age: yup.number().optional(),
   }),
 });
+
+export type Person = yup.InferType<typeof personSchema>['query'];

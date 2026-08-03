@@ -1,4 +1,1 @@
-export interface Person {
-  name: string;
-  age?: number;
-}
+export type { Person } from '../../schemas/personschema';

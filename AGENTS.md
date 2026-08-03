@@ -11,8 +11,12 @@
 - Routes belong in `src/routes/`, schemas in `src/schemas/`, middleware in
   `src/middleware/`, and shared types/utilities in `src/utils/`.
 - Add endpoints through the `Routes` table in `src/routes/index.ts`.
-- Put `validate(schema)` before handlers and use `res.locals.validated` for
-  validated, cast values.
+- Put `validate(schema)` before handlers. The `validate` middleware is generic,
+  so derive request types from the schema with `Yup.InferType<typeof schema>`
+  instead of hand-writing interfaces. Type the handler's `res` as
+  `Response<unknown, { validated: InferType<typeof mySchema> }>` so
+  `res.locals.validated` is typed and no `as` cast is needed. Assert the
+  `Routes` array to `Route[]` only to satisfy the shared route table type.
 - Validation failures are HTTP 400. Unexpected failures go to the central error
   handler, which must not leak stack traces outside development.
 - Add or update supertest/Vitest coverage for every endpoint.

@@ -2,7 +2,7 @@ import express from 'express';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { createApp, errorHandler } from '../app';
-import { personUtils } from '../utils/personUtils';
+import { createGreeting } from '../controllers/person';
 
 describe('API routes', () => {
   const app = createApp();
@@ -58,9 +58,9 @@ describe('API routes', () => {
   });
 });
 
-describe('personUtils', () => {
+describe('createGreeting', () => {
   it('formats a person with an age', () => {
-    expect(personUtils({ name: 'Jane', age: 30 })).toBe(
+    expect(createGreeting({ name: 'Jane', age: 30 })).toBe(
       'Hello Jane you are 30 years old',
     );
   });

@@ -1,45 +1,14 @@
-import type { InferType } from 'yup';
-import { Express, Request, Response } from 'express';
-import { Route } from './Route';
+import type { Express } from 'express';
+import { route, defineRoutes, injectRoutes as mount } from './defineRoute';
+import { personSchema } from '../schemas/person';
+import { home } from '../controllers/home';
+import { createGreeting } from '../controllers/person';
 
-import { personSchema } from '../schemas/personschema';
-import { validate } from '../middleware/validation';
-import { personUtils } from '../utils/personUtils';
+export const routes = defineRoutes([
+  route('get', '/').handle(home),
+  route('get', '/hello')
+    .schema(personSchema)
+    .handle(({ validated }) => createGreeting(validated.query)),
+]);
 
-type ValidatedHello = InferType<typeof personSchema>;
-
-const Routes = [
-  {
-    path: '/',
-    method: 'get',
-    handler: [
-      (_req: Request, res: Response) => {
-        res.send(
-          `Hello World!, please visit <a href="/hello">/hello</a> to see the magic`,
-        );
-      },
-    ],
-  },
-  {
-    // receive a request with a body that has a Person Schema (name and age property)
-    path: '/hello',
-    method: 'get',
-    handler: [
-      validate(personSchema),
-      (_req: Request, res: Response<unknown, { validated: ValidatedHello }>) => {
-        res.send(personUtils(res.locals.validated.query));
-      },
-    ],
-  },
-] as Route[];
-
-/**
- * Injects the defined routes into the provided Express app instance.
- * @param app The Express app instance to inject the routes into.
- */
-export const injectRoutes = (app: Express) => {
-  Routes.forEach((route: Route) => {
-    const { method, path, handler } = route;
-    app[method](path, ...handler);
-  });
-};
+export const injectRoutes = (app: Express): void => mount(app, routes);

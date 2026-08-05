@@ -6,6 +6,8 @@ and a pnpm-based development workflow.
 The template provides:
 
 - Express 5 with schema-derived request types (`Yup.InferType`)
+- Type-inferred `route(...).schema(...).handle(...)` builder
+- Controller layer separated from route wiring
 - Yup validation with cast values available through typed `res.locals.validated`
 - Structured JSON responses for validation, not-found, and internal errors
 - Helmet and CORS security middleware
@@ -69,18 +71,18 @@ dependency resolution.
 src/
 |-- app.ts                 # Express app construction
 |-- index.ts               # Environment loading and server bootstrap
+|-- controllers/           # Business logic handlers
+|   |-- home.ts
+|   `-- person.ts
 |-- middleware/
 |   `-- validation.ts      # Yup validation middleware
 |-- routes/
-|   |-- Route.ts           # Route table type
+|   |-- defineRoute.ts     # Type-inferred route builder
 |   `-- index.ts           # Route definitions and registration
 |-- schemas/
-|   `-- personschema.ts    # Request schemas
-|-- tests/
-|   `-- index.spec.ts      # Vitest and supertest suite
-`-- utils/
-    |-- personUtils.ts
-    `-- types/person.ts
+|   `-- person.ts          # Request schemas
+`-- tests/
+    `-- index.spec.ts      # Vitest and supertest suite
 ```
 
 ## API reference
@@ -103,28 +105,28 @@ GET /hello?name=John&age=20
 ## Adding a route
 
 1. Add a Yup schema under `src/schemas/`.
-2. Add a `Route` entry to the `Routes` table in `src/routes/index.ts`.
-3. Place `validate(schema)` before the route handler.
-4. Type the handler's `res` with `Response<unknown, { validated: InferType<typeof yourSchema> }>` so `res.locals.validated` is fully typed and the `as` cast is unnecessary.
-5. Assert the `Routes` array to `Route[]` so the shared route table type accepts route-specific validated locals.
-6. Add a supertest case in `src/tests/index.spec.ts`.
+2. Add a pure controller function under `src/controllers/`.
+3. Wire the route in `src/routes/index.ts` using the `route` builder.
+4. Add a supertest case in `src/tests/index.spec.ts`.
 
-For example:
+For example, given a `personSchema` with a `body` field:
 
 ```ts
-const Routes = [
-  {
-    path: '/people',
-    method: 'post',
-    handler: [
-      validate(personSchema),
-      (_req, res: Response<unknown, { validated: InferType<typeof personSchema> }>) => {
-        res.json(res.locals.validated);
-      },
-    ],
-  },
-] as Route[];
+// src/routes/index.ts
+export const routes = defineRoutes([
+  route('post', '/people')
+    .schema(personSchema)
+    .handle(({ validated }) => createPerson(validated.body)),
+]);
 ```
+
+Routes without validation use the shorter form:
+
+```ts
+route('get', '/').handle(home);
+```
+
+The `validated` object is typed from `Yup.InferType<typeof schema>`. The builder produces a standard Express middleware chain internally, so `app.ts` stays unchanged.
 
 ## Error responses
 

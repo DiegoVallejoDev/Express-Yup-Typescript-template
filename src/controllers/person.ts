@@ -1,6 +1,6 @@
-import { Person } from './types/person';
+import { Person } from '../schemas/person';
 
-export const personUtils = (person: Person) => {
+export const createGreeting = (person: Person) => {
   let message = `Hello ${person.name}`;
   if (person.age !== undefined) {
     message += ` you are ${person.age} years old`;
